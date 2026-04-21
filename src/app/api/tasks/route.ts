@@ -33,3 +33,31 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: 'Aduh error bro' }, { status: 500 });
   }
 }
+
+
+export async function GET(req: NextRequest) {
+  try {
+    const authHeader = req.headers.get('authorization');
+    const token = authHeader?.split(' ')[1];
+    const decoded = await verifyToken(token!);
+
+    if (!decoded || !decoded.id) {
+      return NextResponse.json({ message: 'Akses ditolak' }, { status: 401 });
+    }
+
+    const tasks = await Task.where('user_id', new ObjectId(decoded.id as string))
+      .orderBy('createdAt', 'desc') 
+      .get();
+
+    return NextResponse.json(
+      {
+        message: 'Berhasil mengambil daftar tugas',
+        tasks,
+      },
+      { status: 200 },
+    );
+  } catch (error) {
+    console.error('ERROR_GET_TASKS:', error);
+    return NextResponse.json({ message: 'Gagal ambil data bro' }, { status: 500 });
+  }
+}
