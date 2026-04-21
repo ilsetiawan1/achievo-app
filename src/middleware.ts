@@ -1,3 +1,5 @@
+// src\middleware.ts
+
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { verifyToken } from '@/lib/auth';
@@ -26,6 +28,6 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     '/api/tasks/:path*', 
-    '/api/user/profile/:path*',
+    '/api/user/:path*',
   ],
 };
